@@ -3,8 +3,14 @@
 
 Eat-and-grow casual top-down game. You are a pink donut: eat crumbs and smaller donuts to grow, avoid bigger donuts, and **survive for 10 minutes**.
 
-- **Android build:** [`APK/Neo_Nti_33HA2608708_HFGE1181_SA1.apk`](APK/)
+- **Android build:** [`APK/Neo_Nti_33HA2608708_HFGE1181_SA1.apk`](APK/) (IL2CPP, ARM64, Android 7.0 / API 24+)
 - **Scenes:** `Assets/Scenes/MainMenu.unity` → `Assets/Scenes/Game.unity`
+- **Submission cover page:** [`Submission/`](Submission/)
+
+### Installing the APK on a phone
+1. Download `APK/Neo_Nti_33HA2608708_HFGE1181_SA1.apk` on the phone (or copy it over USB).
+2. Open it and allow "Install unknown apps" for your browser/file manager when Android asks.
+3. Launch **Donut Devour**. The game plays in landscape.
 
 ## Controls
 | Platform | Move | Steer | Pause |
@@ -49,6 +55,21 @@ Every change is marked with an `// SA1:` comment. New scripts are in `Assets/Scr
 | `SceneNavigation` | Uses fade transition | Smooth scene changes, click sound finishes |
 | `SpawnParticleOnEnter/Exit` | Falls back to the animated object's position | State machine behaviours can't reference scene Transforms |
 | `SoundManager` | `Stop()` | Music stops when the player dies |
+| `UnitSizeHandler` | "Reached the centre" uses a small size-relative tolerance (8% of size) instead of a fixed 0.015 units | Found in playtesting: food snaps to the centre in its own trigger callback, but the moving eater's callback often runs first each physics step, so with 0.015 the player could only eat while standing still |
+| `EnemySizeHandler` | Rebinds an uninitialised Animator before `SetTrigger("Bite")` | Found in playtesting: "Animator is not playing an AnimatorController" warnings when off-screen enemies ate |
+
+## Playtest log (16 Nov 2026)
+| Test | Result |
+|---|---|
+| Main menu → Play, Exit | ✅ fade transition, click sound |
+| Movement (PC W + mouse) and wall collision | ✅ player stops on walls, can't leave the map |
+| Touch joystick (Device Simulator, landscape) | ✅ knob steers and moves the donut; PC hint hidden |
+| Food pulled to centre and eaten, satiation bar fills | ✅ (after the `UnitSizeHandler` fix above) |
+| Enemy arrows | ✅ red = bigger (danger), green = smaller (prey); hidden when the enemy is on screen |
+| Pause (Esc/P/II) → Resume / Restart / Quit | ✅ time freezes while paused |
+| Eaten by bigger donut → Game Over → Try Again | ✅ death burst + sound, music stops, stats shown |
+| Console | ✅ no errors; only unused-variable warnings from the provided scripts |
+| Android APK build | ✅ 39.5 MB, built with Unity 6000.0.63f1 |
 
 ## Rebuilding
 `SA1 > Build Everything` regenerates import settings, tiles, animations, particles, prefabs and both scenes. `SA1 > Build Android APK` builds the APK into `/APK`.
