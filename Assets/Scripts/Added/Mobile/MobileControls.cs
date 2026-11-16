@@ -12,7 +12,8 @@ public class MobileControls : MonoBehaviour
 
     private void Awake()
     {
-        UseTouchControls = Application.isMobilePlatform || (Application.isEditor && simulateInEditor);
+        // UnityEngine.Device.Application = the real device on a phone, and the simulated device in Unity's Device Simulator
+        UseTouchControls = UnityEngine.Device.Application.isMobilePlatform || (Application.isEditor && simulateInEditor);
         foreach (var go in touchOnlyObjects) if (go) go.SetActive(UseTouchControls);
         foreach (var go in desktopOnlyObjects) if (go) go.SetActive(!UseTouchControls);
     }
